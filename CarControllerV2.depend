@@ -1,0 +1,34 @@
+# depslib dependency file v1.0
+1468973065 source:/home/pi/Desktop/CarControllerV2/main.cpp
+	<iostream>
+	"serial.h"
+
+1468966784 source:/home/pi/Desktop/CarControllerV2/src/command.cpp
+	"command.h"
+
+1468966552 /home/pi/Desktop/CarControllerV2/include/command.h
+	<string>
+
+1468968603 source:/home/pi/Desktop/CarControllerV2/src/encoder.cpp
+	"encoder.h"
+
+1468968489 /home/pi/Desktop/CarControllerV2/include/encoder.h
+	<pigpio.h>
+
+1469066837 /home/pi/Desktop/CarControllerV2/include/serial.h
+	<pigpio.h>
+
+1468972971 source:/home/pi/Desktop/CarControllerV2/src/sonar.cpp
+	"sonar.h"
+
+1468972970 /home/pi/Desktop/CarControllerV2/include/sonar.h
+
+1468973825 source:/home/pi/Desktop/CarControllerV2/src/serial.cpp
+	"serial.h"
+
+1469065944 source:/home/pi/Desktop/CarControllerV2/src/motor.cpp
+	"motor.h"
+
+1469065958 /home/pi/Desktop/CarControllerV2/include/motor.h
+	<pigpio.h>
+
