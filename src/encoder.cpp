@@ -2,12 +2,12 @@
 
 Encoder::Encoder(unsigned gpio): _gpio(gpio), _counter(0)
 {
-    _gpio = gpio;
+    //_gpio = gpio;
 
     gpioSetMode(gpio, PI_INPUT);
 
-    // let input signal steady for 10us
-    gpioGlitchFilter(gpio, 10);
+    // let input signal steady for 50us
+    gpioGlitchFilter(gpio, 50);
 
     // call _pulseProc everytime _gpio change state
     gpioSetAlertFuncEx(gpio, pulseProc, this);
@@ -15,7 +15,7 @@ Encoder::Encoder(unsigned gpio): _gpio(gpio), _counter(0)
 
 Encoder::~Encoder()
 {
-    gpioSetAlertFuncEx(_gpio, NULL, NULL);
+    gpioSetAlertFunc(_gpio, NULL);
 }
 
 void Encoder::pulseProc(int gpio, int level, uint32_t tick, void* data)

@@ -1,6 +1,273 @@
 #include "car.h"
+#include "hmc5883l.h"
+#include "constants.h"
+#include "sonar.h"
+#include <unistd.h>
+#include <iostream>
+using namespace std;
 
-Car::Car()
+Car::Car():
+    _leftMotor(BRIDGE2_ENABLE, BRIDGE2_IN1, BRIDGE2_IN2),
+    _rightMotor(BRIDGE1_ENABLE, BRIDGE1_IN1, BRIDGE1_IN2),
+    _leftEncoder(ENCODER2),
+    _rightEncoder(ENCODER1),
+    _sonar1(TRIGGER1, ECHO1),
+    _sonar2(TRIGGER2, ECHO2),
+    _sonar3(TRIGGER3, ECHO3),
+    _sonar4(TRIGGER4, ECHO4),
+    _compass()
 {
-    //ctor
+    setSpeed(2); // medium
+}
+
+Car& Car::getInstance()
+{
+    static Car instance;
+    return instance;
+}
+
+void Car::rotateCar(CarDirection direction, int degree)
+{
+    int pulse = 28;
+    int leftPulse = 0;
+    int rightPulse = 0;
+    _leftEncoder.resetCounter();
+    _rightEncoder.resetCounter();
+    if(CarDirection::LEFT == direction)
+    {
+        _rightMotor.run(MotorDirection::BACKWARD, _speed);
+        _leftMotor.run(MotorDirection::FORWARD, _speed);
+    }
+    else
+    {
+        _leftMotor.run(MotorDirection::BACKWARD, _speed);
+        _rightMotor.run(MotorDirection::FORWARD, _speed);
+    }
+
+    while(leftPulse < pulse && rightPulse < pulse)
+        {
+        leftPulse = _leftEncoder.getCounter();
+        rightPulse = _rightEncoder.getCounter();
+        usleep(100);
+    }
+    _leftMotor.stop(false);
+    _rightMotor.stop(false);
+}
+
+void Car::rotateCarEx(CarDirection direction, int degree)
+{
+    int measured = 0;
+    HMC5883L compass;
+    int lastAngle = compass.getAngle();
+    if(CarDirection::LEFT == direction)
+    {
+        _leftMotor.run(MotorDirection::BACKWARD, _speed);
+        _rightMotor.run(MotorDirection::FORWARD, _speed);
+    }
+    else if(CarDirection::RIGHT == direction)
+    {
+        _rightMotor.run(MotorDirection::BACKWARD, _speed);
+        _leftMotor.run(MotorDirection::FORWARD, _speed);
+    }
+    while(measured < degree)
+    {
+        int currentAngle = compass.getAngle();
+        int diffAngle = currentAngle - lastAngle;
+        lastAngle = currentAngle;
+        if(diffAngle < 0)
+        {
+            diffAngle = -diffAngle;
+        }
+        if(diffAngle > 180)
+        {
+            diffAngle = 360 - diffAngle;
+        }
+        measured += diffAngle;
+        usleep(1000);
+        cout << "current angle: " << currentAngle << endl;
+        cout << "diff angle: " << diffAngle << endl;
+        cout << "measure angle: " << measured << endl;
+    }
+    _leftMotor.stop(true);
+    _rightMotor.stop(true);
+}
+
+void Car::moveCar(CarDirection direction, int pulse)
+{
+    _leftEncoder.resetCounter();
+    _rightEncoder.resetCounter();
+    int leftPulse = 0;
+    int rightPulse = 0;
+    MotorDirection md;
+    if(CarDirection::FORWARD == direction)
+    {
+        md = MotorDirection::FORWARD;
+    } else {
+        md = MotorDirection::BACKWARD;
+    }
+        _leftMotor.run(md, _speed);
+        _rightMotor.run(md, _speed);
+
+    bool isBlocked = false;
+    while(leftPulse < pulse && rightPulse < pulse)
+    {
+        // check if distance reached
+        // check if any blockage
+        // then stop until unblocked
+        //cout << leftPulse << endl << rightPulse << endl;
+        do
+        {
+            int ping1, ping2;
+            if(CarDirection::FORWARD == direction)
+            {
+                ping1 = _sonar2.ping();
+                ping2 = _sonar3.ping();
+            }
+            else
+            {
+                ping1 = _sonar1.ping();
+                ping2 = _sonar4.ping();
+            }
+            if(ping1 < _minPing && ping2 < _minPing)
+            {
+                if(!isBlocked)
+                {
+                    isBlocked = true;
+                    cout << "block : " << ping1 << ", " << ping2 << endl;
+                    _leftMotor.stop(true);
+                    _rightMotor.stop(true);
+                }
+            }
+            else
+            {
+                if(isBlocked)
+                {
+                    isBlocked = false;
+                    cout << "unblock" << endl;
+                    cout << "block : " << ping1 << ", " << ping2 << endl;
+                        _leftMotor.run(md, _speed);
+                        _rightMotor.run(md, _speed);
+                }
+            }
+        }
+        while(isBlocked);
+
+        leftPulse = _leftEncoder.getCounter();
+        rightPulse = _rightEncoder.getCounter();
+    }
+    _leftMotor.stop(false);
+    _rightMotor.stop(false);
+}
+
+
+void Car::moveForward(int distance)
+{
+    int pulse = (distance * 40) / 22;
+    if(pulse > 0)
+    {
+        moveCar(CarDirection::FORWARD, pulse);
+    }
+}
+
+void Car::moveBackward(int distance)
+{
+    int pulse = (distance * 40) / 22;
+    if(pulse > 0)
+    {
+        moveCar(CarDirection::BACKWARD, pulse);
+    }
+}
+/*
+void Car::turnCar(CarDirection direction, int degree)
+{
+    _leftMotor.stop(false);
+    _rightMotor.stop(false);
+    usleep(10000);
+    int pulse = 160;
+    int outerPulse;
+    _leftEncoder.resetCounter();
+    _rightEncoder.resetCounter();
+    if(1 == direction) // turn left
+    {
+        _leftMotor.setPWMFrequency(25);
+        _leftMotor.setPWMDutyCycle(15);
+        _rightMotor.setPWMFrequency(50);
+        _rightMotor.setPWMDutyCycle(127);
+    }
+    else if(2 == direction)
+    {
+        _leftMotor.setPWMFrequency(50);
+        _leftMotor.setPWMDutyCycle(127);
+        _rightMotor.setPWMFrequency(25);
+        _rightMotor.setPWMDutyCycle(15);
+    }
+    _leftMotor.run(MotorDirection::FORWARD);
+    _rightMotor.run(MotorDirection::FORWARD);
+    do
+    {
+        if(1 == direction)
+        {
+            outerPulse = _rightEncoder.getCounter();
+        }
+        else
+        {
+            outerPulse = _leftEncoder.getCounter();
+        }
+        usleep(100);
+    }
+    while(outerPulse < pulse);
+    _leftMotor.stop(false);
+    _rightMotor.stop(false);
+}
+
+
+void Car::turnLeft(int degree)
+{
+    turnCar(1, degree);
+}
+
+void Car::turnRight(int degree)
+{
+    turnCar(2, degree);
+}
+*/
+
+void Car::rotateLeft(int degree)
+{
+    rotateCarEx(CarDirection::LEFT, degree);
+}
+
+void Car::rotateRight(int degree)
+{
+    rotateCarEx(CarDirection::RIGHT, degree);
+}
+
+void Car::test()
+{
+}
+void Car::stop()
+{
+    _leftMotor.stop(true);
+    _rightMotor.stop(true);
+}
+
+void Car::setSpeed(int level)
+{
+    if(1 == level)
+    {
+        _speed = 18;
+        _minPing = 20 * 58; // 10cm
+    }
+    else if(2 == level)
+    {
+        _speed = 36;
+        _minPing = 40 * 58;
+    }
+    else if(3 == level)
+    {
+        _speed = 54;
+        _minPing = 50 * 58;
+    }
+    _leftMotor.setPWMDutyCycle(_speed);
+    _rightMotor.setPWMDutyCycle(_speed);
 }

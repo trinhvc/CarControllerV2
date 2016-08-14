@@ -3,7 +3,7 @@
 
 #include <pigpio.h>
 
-enum class MotorDirection:unsigned char
+enum class MotorDirection
 {
     FORWARD,
     BACKWARD
@@ -12,16 +12,15 @@ enum class MotorDirection:unsigned char
 class Motor
 {
     private:
-        unsigned _enable;
-        unsigned _in1;
-        unsigned _in2;
-        unsigned _pwmDuty;
+        int _enable;
+        int _in1;
+        int _in2;
+        bool _isRunning;
     public:
-        Motor(unsigned enable, unsigned in1, unsigned in2);
+        Motor(int enable, int in1, int in2);
         ~Motor();
-        void setPWMFrequency(unsigned frequency);
-        void setPWMDutyCycle(unsigned dutycycle);
-        void run(MotorDirection direction);
+        void setPWMDutyCycle(int dutycycle);
+        void run(MotorDirection direction, int duycycle);
         void stop(bool force);
 };
 

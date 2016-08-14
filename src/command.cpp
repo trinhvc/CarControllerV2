@@ -5,12 +5,12 @@ Command::Command()
     _id = -1;
 }
 
-Command::Command(int id, string action, int distance, int speed)
+Command::Command(int id, string action, int param1, int param2)
 {
     _id = id;
     _action = action;
-    _distance = distance;
-    _speed = speed;
+    _param1 = param1;
+    _param2 = param2;
 }
 
 int Command::getID()
@@ -33,22 +33,22 @@ void Command::setAction(string action)
     _action = action;
 }
 
-int Command::getDistance()
+int Command::getParam1()
 {
-    return _distance;
+    return _param1;
 }
 
-void Command::setDistance(int distance)
+void Command::setParam1(int value)
 {
-    _distance = distance;
+    _param1 = value;
 }
 
-int Command::getSpeed()
+int Command::getParam2()
 {
-    return _speed;
+    return _param2;
 }
 
-void Command::setSpeed(int speed)
+void Command::setParam2(int value)
 {
-    _speed = speed;
+    _param2 = value;
 }

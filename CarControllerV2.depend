@@ -1,34 +1,69 @@
 # depslib dependency file v1.0
-1468973065 source:/home/pi/Desktop/CarControllerV2/main.cpp
+1471056731 source:/home/pi/Desktop/CarControllerV2/main.cpp
 	<iostream>
+	<sstream>
+	<queue>
+	<unistd.h>
 	"serial.h"
-
-1468966784 source:/home/pi/Desktop/CarControllerV2/src/command.cpp
+	"car.h"
 	"command.h"
 
-1468966552 /home/pi/Desktop/CarControllerV2/include/command.h
+1471000849 source:/home/pi/Desktop/CarControllerV2/src/command.cpp
+	"command.h"
+
+1471000848 /home/pi/Desktop/CarControllerV2/include/command.h
 	<string>
 
-1468968603 source:/home/pi/Desktop/CarControllerV2/src/encoder.cpp
+1471019279 source:/home/pi/Desktop/CarControllerV2/src/encoder.cpp
 	"encoder.h"
 
 1468968489 /home/pi/Desktop/CarControllerV2/include/encoder.h
 	<pigpio.h>
 
-1469066837 /home/pi/Desktop/CarControllerV2/include/serial.h
+1471019555 /home/pi/Desktop/CarControllerV2/include/serial.h
+	<string>
+
+1471019771 source:/home/pi/Desktop/CarControllerV2/src/sonar.cpp
+	"sonar.h"
+	<unistd.h>
+
+1471019771 /home/pi/Desktop/CarControllerV2/include/sonar.h
 	<pigpio.h>
 
-1468972971 source:/home/pi/Desktop/CarControllerV2/src/sonar.cpp
-	"sonar.h"
-
-1468972970 /home/pi/Desktop/CarControllerV2/include/sonar.h
-
-1468973825 source:/home/pi/Desktop/CarControllerV2/src/serial.cpp
+1471019555 source:/home/pi/Desktop/CarControllerV2/src/serial.cpp
 	"serial.h"
+	<pigpio.h>
 
-1469065944 source:/home/pi/Desktop/CarControllerV2/src/motor.cpp
+1471061943 source:/home/pi/Desktop/CarControllerV2/src/motor.cpp
 	"motor.h"
 
-1469065958 /home/pi/Desktop/CarControllerV2/include/motor.h
+1471057474 /home/pi/Desktop/CarControllerV2/include/motor.h
 	<pigpio.h>
+
+1471059040 /home/pi/Desktop/CarControllerV2/include/car.h
+	"motor.h"
+	"encoder.h"
+	"sonar.h"
+	"hmc5883l.h"
+
+1469089139 /home/pi/Desktop/CarControllerV2/include/mapping.h
+
+1471150186 source:/home/pi/Desktop/CarControllerV2/src/car.cpp
+	"car.h"
+	"hmc5883l.h"
+	"constants.h"
+	"sonar.h"
+	<unistd.h>
+	<iostream>
+
+1471019555 /home/pi/Desktop/CarControllerV2/include/constants.h
+
+1470984077 source:/home/pi/Desktop/CarControllerV2/src/hmc5883l.cpp
+	"hmc5883l.h"
+	"constants.h"
+	<cmath>
+	<unistd.h>
+	<pigpio.h>
+
+1470724067 /home/pi/Desktop/CarControllerV2/include/hmc5883l.h
 

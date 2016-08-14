@@ -1,19 +1,19 @@
 #ifndef SERIAL_H
 #define SERIAL_H
 
-#include <pigpio.h>
+#include <string>
+using namespace std;
 class Serial
 {
     private:
-        unsigned _handle;
+        int _handle;
     public:
         Serial(char* device, int baudrate);
         ~Serial();
+        int dataAvailable();
         char readChar();
         void writeChar(char c);
-        void write(char* message, unsigned length);
-
-
+        void write(string message);
 };
 
 #endif // SERIAL_H
