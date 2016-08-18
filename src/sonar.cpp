@@ -4,7 +4,6 @@ Sonar::Sonar(int trigger, int echo): _trigger(trigger), _echo(echo)
 {
     gpioSetMode(trigger, PI_OUTPUT);
     gpioWrite(trigger, PI_LOW);
-
     gpioSetMode(echo, PI_INPUT);
     gpioSetAlertFuncEx(_echo, echoProc, this);
 }
@@ -12,29 +11,29 @@ Sonar::Sonar(int trigger, int echo): _trigger(trigger), _echo(echo)
 void Sonar::pullTrigger()
 {
     gpioWrite(_trigger, PI_HIGH);
-    usleep(10); // 10us
+    usleep(12); // 12us
     gpioWrite(_trigger, PI_LOW);
 }
 
 void Sonar::echoProc(int gpio, int level, uint32_t tick, void* data)
 {
-    static uint32_t startTick;
-    Sonar* me = (Sonar*) data;
+    Sonar* ptr = (Sonar*) data;
+    Sonar& me = *ptr;
     if(PI_HIGH == level)
     {
-        startTick = tick;
+        me._startTick = tick;
     }
     else
     {
-        me->_ping = tick - startTick;
+        me._ping = tick - me._startTick;
     }
 }
 
 int Sonar::ping()
 {
     pullTrigger();
-    _ping = -1;
-    usleep(30*1000); //30 ms
+    _ping = 400 * 58;
+    usleep(30 * 1000); //30 ms
     return _ping;
 }
 

@@ -7,11 +7,10 @@
 #include "car.h"
 //#include "enhan"
 //#include "hmc5883l.h"
-//#include "encoder.h"
+#include "encoder.h"
 #include "command.h"
 //#include "sonar.h"
 //#include "constants.h"
-#define MAGIC_NUM       22/20 // 22 cm per 20 pulse
 using namespace std;
 
 void* driveCar(void* arg);
@@ -25,14 +24,18 @@ int main()
         pthread_t* t1 = NULL;
         string message;
         /*
+        Sonar sonar1(TRIGGER1, ECHO1);
+        Sonar sonar4(TRIGGER4, ECHO4);
+        Sonar sonar3(TRIGGER3, ECHO3);
+        Sonar sonar2(TRIGGER2, ECHO2);
         while(true)
         {
-                Sonar sonar1(TRIGGER1, ECHO1);
-                Sonar sonar2(TRIGGER4, ECHO4);
-                int ping1 = sonar1.ping(); // delayed 50ms
-                int ping2 = sonar2.ping(); // delayed 50ms
-                cout << "ping1 " << ping1 << endl;
-                cout << "ping2 " << ping2 << endl;
+            int ping1 = sonar1.ping(); // delayed 50ms
+            int ping2 = sonar2.ping(); // delayed 50ms
+                        int ping4 = sonar4.ping(); // delayed 50ms
+            int ping3 = sonar3.ping(); // delayed 50ms
+            cout << ping1 << " vs " << ping4 << endl;
+            cout << ping2 << " vs " << ping3 << endl;
         }
         */
         while(true)
@@ -69,19 +72,18 @@ int main()
                     ss >> id >> action >> param1 >> param2;
                     if(action == "stop")
                     {
-                    cout << "stop" << endl;
+                        cout << "stop" << endl;
                         if(t1 != NULL)
                         {
-                            cout << "stop thread" << endl;
                             gpioStopThread(t1);
                             t1 = NULL;
-                            cout << "thread stop" << endl;
                         }
                         Car::getInstance().stop();
                     }
                     else if(action == "speed")
                     {
-                        Car::getInstance().setSpeed(param1);
+                        int speedlv = param1;
+                        Car::getInstance().setSpeed(speedlv);
                     }
                     else
                     {
@@ -96,9 +98,6 @@ int main()
             }
             usleep(100); // 0.1ms
         }
-//gpioDelay(1000000*10)
-//cout << encoder1->getCount() << endl;
-//cout << encoder2->getCount() << endl;
         cout << "main thread end" << endl;
     }
     gpioTerminate();
@@ -109,9 +108,11 @@ void* driveCar(void* arg)
 {
     queue<Command>* queuePtr = (queue<Command>*) arg;
     queue<Command>& cmdQueue = *queuePtr;
+    Car& car = Car::getInstance();
+
     //cout << "queue address" << &cmdQueue << endl;
     // moving direction when no distance defined
-    Car& car = Car::getInstance();
+
     int continuous = 0;
     while(true)
     {
@@ -119,16 +120,19 @@ void* driveCar(void* arg)
         if(!cmdQueue.empty())
         {
             Command cmd = cmdQueue.front();
-            int speedLevel = cmd.getParam2();
-            Car::getInstance().setSpeed(speedLevel);
+
             string action = cmd.getAction();
-            cout << action << " " << speedLevel << endl;
+            cout << action << endl;
             if("ahead" == action)
             {
+                int speedLevel = cmd.getParam2();
+                car.setSpeed(speedLevel);
                 int distance = cmd.getParam1();
                 if(distance > 0)
                 {
-                    Car::getInstance().moveForward(distance);
+                    car.moveForward(distance);
+                    car.stop();
+                    car.setSpeed(0); // default speed
                     continuous = 0;
                 }
                 else
@@ -139,10 +143,14 @@ void* driveCar(void* arg)
             else if("back" == action)
             {
                 cout << "back = action" << endl;
+                int speedLevel = cmd.getParam2();
+                car.setSpeed(speedLevel);
                 int distance = cmd.getParam1();
                 if(distance > 0)
                 {
-                    Car::getInstance().moveBackward(distance);
+                    car.moveBackward(distance);
+                    car.stop();
+                    car.setSpeed(0); // default speed
                     continuous = 0;
                 }
                 else
@@ -153,20 +161,24 @@ void* driveCar(void* arg)
             else if("left" == action)
             {
                 int distance = cmd.getParam1();
-                Car::getInstance().rotateLeft(90);
+                car.rotateLeft(90);
                 if(distance > 0)
                 {
-                    Car::getInstance().moveForward(distance);
+                    car.moveForward(distance);
+                    car.stop();
+                    car.setSpeed(0); // default speed
                     continuous = 0;
                 }
             }
             else if("right" == action)
             {
                 int distance = cmd.getParam1();
-                Car::getInstance().rotateRight(90);
+                car.rotateRight(90);
                 if(distance > 0)
                 {
-                    Car::getInstance().moveForward(distance);
+                    car.moveForward(distance);
+                    car.stop();
+                    car.setSpeed(0); // default speed
                     continuous = 0;
                 }
             }
@@ -176,14 +188,24 @@ void* driveCar(void* arg)
         {
             if(continuous != 0)
             {
-                int distance  = 10; //
+                int distance  = 10; // 10cm
                 if(continuous > 0)
                 {
-                    Car::getInstance().moveForward(distance);
+                    int result = car.moveForward(distance);
+                    if(result != 1)
+                    {
+                        continuous = 0;
+                        car.setSpeed(0); // default speed
+                    }
                 }
                 else
                 {
-                    Car::getInstance().moveBackward(distance);
+                    int result = car.moveBackward(distance);
+                    if(result != 1)
+                    {
+                        continuous = 0;
+                        car.setSpeed(0); // default speed
+                    }
                 }
             }
         }

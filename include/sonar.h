@@ -8,6 +8,7 @@ class Sonar
         int _trigger;
         int _echo;
         int _ping;
+        uint32_t _startTick;
         void pullTrigger();
         static void echoProc(int gpio, int level, uint32_t tick, void *data);
     public:

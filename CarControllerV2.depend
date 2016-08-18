@@ -1,11 +1,12 @@
 # depslib dependency file v1.0
-1471056731 source:/home/pi/Desktop/CarControllerV2/main.cpp
+1471505955 source:/home/pi/Desktop/CarControllerV2/main.cpp
 	<iostream>
 	<sstream>
 	<queue>
 	<unistd.h>
 	"serial.h"
 	"car.h"
+	"encoder.h"
 	"command.h"
 
 1471000849 source:/home/pi/Desktop/CarControllerV2/src/command.cpp
@@ -14,7 +15,7 @@
 1471000848 /home/pi/Desktop/CarControllerV2/include/command.h
 	<string>
 
-1471019279 source:/home/pi/Desktop/CarControllerV2/src/encoder.cpp
+1471500437 source:/home/pi/Desktop/CarControllerV2/src/encoder.cpp
 	"encoder.h"
 
 1468968489 /home/pi/Desktop/CarControllerV2/include/encoder.h
@@ -23,32 +24,32 @@
 1471019555 /home/pi/Desktop/CarControllerV2/include/serial.h
 	<string>
 
-1471019771 source:/home/pi/Desktop/CarControllerV2/src/sonar.cpp
+1471498629 source:/home/pi/Desktop/CarControllerV2/src/sonar.cpp
 	"sonar.h"
 	<unistd.h>
 
-1471019771 /home/pi/Desktop/CarControllerV2/include/sonar.h
+1471449323 /home/pi/Desktop/CarControllerV2/include/sonar.h
 	<pigpio.h>
 
 1471019555 source:/home/pi/Desktop/CarControllerV2/src/serial.cpp
 	"serial.h"
 	<pigpio.h>
 
-1471061943 source:/home/pi/Desktop/CarControllerV2/src/motor.cpp
+1471335108 source:/home/pi/Desktop/CarControllerV2/src/motor.cpp
 	"motor.h"
 
-1471057474 /home/pi/Desktop/CarControllerV2/include/motor.h
+1471334832 /home/pi/Desktop/CarControllerV2/include/motor.h
 	<pigpio.h>
 
-1471059040 /home/pi/Desktop/CarControllerV2/include/car.h
+1471419212 /home/pi/Desktop/CarControllerV2/include/car.h
 	"motor.h"
 	"encoder.h"
 	"sonar.h"
-	"hmc5883l.h"
+	"constants.h"
 
 1469089139 /home/pi/Desktop/CarControllerV2/include/mapping.h
 
-1471150186 source:/home/pi/Desktop/CarControllerV2/src/car.cpp
+1471505299 source:/home/pi/Desktop/CarControllerV2/src/car.cpp
 	"car.h"
 	"hmc5883l.h"
 	"constants.h"
@@ -56,7 +57,7 @@
 	<unistd.h>
 	<iostream>
 
-1471019555 /home/pi/Desktop/CarControllerV2/include/constants.h
+1471502880 /home/pi/Desktop/CarControllerV2/include/constants.h
 
 1470984077 source:/home/pi/Desktop/CarControllerV2/src/hmc5883l.cpp
 	"hmc5883l.h"

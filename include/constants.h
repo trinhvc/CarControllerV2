@@ -45,6 +45,4 @@ const int BRIDGE2_IN2 = 16;
 
 const double PI = 3.14159265;
 
-const int MIN_PING = 10 * 58 * 1000; // (us)
-const int MAX_PING = 20 * 58 * 1000;
 #endif // MAPPING_H

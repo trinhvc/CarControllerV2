@@ -5,7 +5,7 @@
 #include "motor.h"
 #include "encoder.h"
 #include "sonar.h"
-#include "hmc5883l.h"
+#include "constants.h"
 enum class CarSpeed
 {
     SLOW,
@@ -15,10 +15,10 @@ enum class CarSpeed
 
 enum class CarDirection
 {
-    FORWARD=1,
-    BACKWARD=2,
-    LEFT=3,
-    RIGHT=4
+    FORWARD,
+    BACKWARD,
+    LEFT,
+    RIGHT,
 };
 
 class Car
@@ -32,24 +32,21 @@ class Car
         Sonar _sonar2;
         Sonar _sonar3;
         Sonar _sonar4;
-        HMC5883L _compass;
         int _speed;
         int _minPing;
-        void moveCar(CarDirection direction, int pulse);
-        void turnCar(CarDirection direction, int degree);
-        void rotateCar(CarDirection direction, int degree);
-        void rotateCarEx(CarDirection direction, int degree);
+        int moveCar(CarDirection direction, int pulse);
+        int rotateCar(CarDirection direction, int pulse);
+        int rotateCarEx(CarDirection direction, int degree);
         Car();
         Car(Car const&);
         void operator = (Car const&);
     public:
         static Car& getInstance();
-        void moveForward(int distance);
-        void moveBackward(int distance);
-        void turnLeft(int degree);
-        void turnRight(int degree);
-        void rotateLeft(int degree);
-        void rotateRight(int degree);
+        ~Car();
+        int moveForward(int distance);
+        int moveBackward(int distance);
+        int rotateLeft(int degree);
+        int rotateRight(int degree);
         void stop();
         void test();
         void setSpeed(int level);

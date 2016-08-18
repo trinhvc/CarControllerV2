@@ -48,20 +48,6 @@ void Motor::stop(bool force)
 
 void Motor::setPWMDutyCycle(int dutycycle)
 {
-    /*
-    if(dutycycle < 31)
-    {
-        gpioSetPWMfrequency(_enable, 40);
-    }
-    else if(dutycycle < 127)
-    {
-        gpioSetPWMfrequency(_enable, 50);
-    }
-    else
-    {
-        gpioSetPWMfrequency(_enable, 100);
-    }
-    */
     if(_isRunning)
     {
         gpioPWM(_enable, dutycycle);
