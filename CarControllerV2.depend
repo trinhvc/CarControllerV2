@@ -1,11 +1,12 @@
 # depslib dependency file v1.0
-1471505955 source:/home/pi/Desktop/CarControllerV2/main.cpp
+1471594060 source:/home/pi/Desktop/CarControllerV2/main.cpp
 	<iostream>
 	<sstream>
 	<queue>
 	<unistd.h>
 	"serial.h"
 	"car.h"
+	"led.h"
 	"encoder.h"
 	"command.h"
 
@@ -49,13 +50,15 @@
 
 1469089139 /home/pi/Desktop/CarControllerV2/include/mapping.h
 
-1471505299 source:/home/pi/Desktop/CarControllerV2/src/car.cpp
+1471588950 source:/home/pi/Desktop/CarControllerV2/src/car.cpp
 	"car.h"
 	"hmc5883l.h"
 	"constants.h"
 	"sonar.h"
 	<unistd.h>
 	<iostream>
+	<cmath>
+	"led.h"
 
 1471502880 /home/pi/Desktop/CarControllerV2/include/constants.h
 
@@ -67,4 +70,8 @@
 	<pigpio.h>
 
 1470724067 /home/pi/Desktop/CarControllerV2/include/hmc5883l.h
+
+1471509497 source:/home/pi/Desktop/CarControllerV2/src/led.cpp
+
+1471510651 /home/pi/Desktop/CarControllerV2/include/led.h
 

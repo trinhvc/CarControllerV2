@@ -45,6 +45,7 @@
 		<Unit filename="include/constants.h" />
 		<Unit filename="include/encoder.h" />
 		<Unit filename="include/hmc5883l.h" />
+		<Unit filename="include/led.h" />
 		<Unit filename="include/motor.h" />
 		<Unit filename="include/serial.h" />
 		<Unit filename="include/sonar.h" />
@@ -53,6 +54,7 @@
 		<Unit filename="src/command.cpp" />
 		<Unit filename="src/encoder.cpp" />
 		<Unit filename="src/hmc5883l.cpp" />
+		<Unit filename="src/led.cpp" />
 		<Unit filename="src/motor.cpp" />
 		<Unit filename="src/serial.cpp" />
 		<Unit filename="src/sonar.cpp" />

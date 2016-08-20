@@ -6,7 +6,7 @@
 #include "serial.h"
 #include "car.h"
 //#include "enhan"
-//#include "hmc5883l.h"
+#include "led.h"
 #include "encoder.h"
 #include "command.h"
 //#include "sonar.h"
@@ -23,6 +23,9 @@ int main()
         queue<Command> cmdQueue;
         pthread_t* t1 = NULL;
         string message;
+        Led::getInstance().setReady(1);
+        Car::getInstance().test();
+
         /*
         Sonar sonar1(TRIGGER1, ECHO1);
         Sonar sonar4(TRIGGER4, ECHO4);
@@ -32,16 +35,17 @@ int main()
         {
             int ping1 = sonar1.ping(); // delayed 50ms
             int ping2 = sonar2.ping(); // delayed 50ms
-                        int ping4 = sonar4.ping(); // delayed 50ms
+            int ping4 = sonar4.ping(); // delayed 50ms
             int ping3 = sonar3.ping(); // delayed 50ms
-            cout << ping1 << " vs " << ping4 << endl;
-            cout << ping2 << " vs " << ping3 << endl;
+            //cout << ping1/58 << " vs " << ping4/58 << endl;
+            cout << ping2/58 << " vs " << ping3/58 << endl;
         }
         */
         while(true)
         {
             while(serial.dataAvailable() > 0)
             {
+                Led::getInstance().setData(1);
                 bool isReady = false;
                 char readChar = serial.readChar();
                 if(readChar == ']')
@@ -96,6 +100,7 @@ int main()
                     }
                 }
             }
+            Led::getInstance().setData(0);
             usleep(100); // 0.1ms
         }
         cout << "main thread end" << endl;
@@ -119,6 +124,11 @@ void* driveCar(void* arg)
         //[id,action,distance,speed]
         if(!cmdQueue.empty())
         {
+            Led::getInstance().setSonar1(0);
+            Led::getInstance().setSonar2(0);
+            Led::getInstance().setSonar3(0);
+            Led::getInstance().setSonar4(0);
+
             Command cmd = cmdQueue.front();
 
             string action = cmd.getAction();
