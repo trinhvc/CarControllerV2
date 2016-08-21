@@ -1,8 +1,8 @@
 #ifndef MAPPING_H
 #define MAPPING_H
 
-//#include <iostream>
-//using namespace std;
+#include <iostream>
+using namespace std;
 /*
 Pin    gpio    use for
 7      4       TRIGGER2
@@ -42,7 +42,10 @@ const int BRIDGE1_IN2 = 24;
 const int BRIDGE2_ENABLE = 20;
 const int BRIDGE2_IN1 = 12;
 const int BRIDGE2_IN2 = 16;
-
+const int INDICATOR_RESET =8;
+const int INDICATOR_PULSE =9;
+const int INDICATOR_EN =10;
+const int INDICATOR_BUZZER =11;
 const double PI = 3.14159265;
 
 #endif // MAPPING_H

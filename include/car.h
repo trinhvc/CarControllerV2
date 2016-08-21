@@ -6,12 +6,11 @@
 #include "encoder.h"
 #include "sonar.h"
 #include "constants.h"
-enum class CarSpeed
-{
-    SLOW,
-    MEDIUM,
-    FAST
-};
+
+const int SPEED_1 = 16;
+const int SPEED_2 = 25;
+const int SPEED_3 = 40;
+
 
 enum class CarDirection
 {

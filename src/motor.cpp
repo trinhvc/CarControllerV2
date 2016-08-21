@@ -1,10 +1,11 @@
 #include "motor.h"
-
+#include "led.h"
 Motor::Motor(int enable, int in1, int in2)
 {
     _enable = enable;
     _in1 = in1;
     _in2 = in2;
+    _led = -1;
     _isRunning = false;
     gpioSetMode(enable, PI_OUTPUT);
     gpioSetPWMfrequency(enable, 40);
@@ -32,6 +33,10 @@ void Motor::run(MotorDirection direction, int dutycycle)
     }
     gpioPWM(_enable, dutycycle);
     _isRunning = true;
+    if (_led >=0)
+    {
+    Led::getInstance().setLed(_led);
+    }
 }
 
 void Motor::stop(bool force)
@@ -44,6 +49,10 @@ void Motor::stop(bool force)
         gpioWrite(_enable, PI_HIGH);
     }
     _isRunning = false;
+    if (_led >=0)
+    {
+        Led::getInstance().unsetLed(_led);
+    }
 }
 
 void Motor::setPWMDutyCycle(int dutycycle)

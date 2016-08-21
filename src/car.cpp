@@ -18,13 +18,15 @@ Car::Car():
     _sonar3(TRIGGER3, ECHO3),
     _sonar4(TRIGGER4, ECHO4)
 {
-    setSpeed(0);
-    cout << "car created" << endl;
+    setSpeed(2);
+    _leftMotor.setLed(3);
+    _rightMotor.setLed(9);
+    _leftEncoder.setLed(4);
+    _rightEncoder.setLed(6);
 }
 
 Car::~Car()
 {
-    cout << "car deleted" << endl;
 }
 
 Car& Car::getInstance()
@@ -35,10 +37,11 @@ Car& Car::getInstance()
 
 int Car::rotateCar(CarDirection direction, int pulse)
 {
+    _rightMotor.stop(false);
+    _leftMotor.stop(false);
+    usleep(300* 1000); //500ms
     int leftPulse = 0;
     int rightPulse = 0;
-    _leftEncoder.resetCounter();
-    _rightEncoder.resetCounter();
     int rotateSpeed = _speed * 2;
     if(CarDirection::LEFT == direction)
     {
@@ -107,10 +110,11 @@ int Car::moveCar(CarDirection direction, int pulse)
     int ping1;
     int ping2;
     MotorDirection md;
+    int leftSpeed = _speed;
     if(CarDirection::FORWARD == direction)
     {
         md = MotorDirection::FORWARD;
-        _leftMotor.run(md, _speed);
+        _leftMotor.run(md, leftSpeed);
         _rightMotor.run(md, _speed);
         ping1 = _sonar2.ping();
         ping2 = _sonar3.ping();
@@ -118,7 +122,7 @@ int Car::moveCar(CarDirection direction, int pulse)
     else
     {
         md = MotorDirection::BACKWARD;
-        _leftMotor.run(md, _speed);
+        _leftMotor.run(md, leftSpeed);
         _rightMotor.run(md, _speed);
         ping1 = _sonar1.ping(); // back right
         ping2 = _sonar4.ping(); //back left
@@ -128,10 +132,9 @@ int Car::moveCar(CarDirection direction, int pulse)
     {
         _leftMotor.stop(true);
         _rightMotor.stop(true);
+        cout << "blocked when start" << endl;
         return -1;
     }
-    _leftEncoder.resetCounter();
-    _rightEncoder.resetCounter();
     int leftPulse = 0;
     int rightPulse = 0;
     bool switcher = true;
@@ -191,6 +194,7 @@ int Car::moveCar(CarDirection direction, int pulse)
                 if(ping1 < _minPing)
                 {
                     Led::getInstance().setSonar2(1);
+                    cout << "sonar 2:" << ping1 /58 << endl;
                 }
             }
             else
@@ -199,6 +203,12 @@ int Car::moveCar(CarDirection direction, int pulse)
                 if(ping2 < _minPing)
                 {
                     Led::getInstance().setSonar3(1);
+                    cout << "sonar 3:" << ping2 /58<< endl;
+                    if (ping2/58 == 5)
+                    {
+                        cout << "sonar 3 (5cm): " << ping2<< endl;
+                        ping2 = 30*58;
+                    }
                 }
             }
         }
@@ -209,7 +219,8 @@ int Car::moveCar(CarDirection direction, int pulse)
                 ping1 = _sonar1.ping(); // back right
                 if(ping1 < _minPing)
                 {
-                    Led::getInstance().setSonar1(1);
+                    //Led::getInstance().setSonar1(1);
+                    cout << "sonar 1:" << ping1 /58 << endl;
                 }
             }
             else
@@ -217,7 +228,8 @@ int Car::moveCar(CarDirection direction, int pulse)
                 ping2 = _sonar4.ping(); //back left
                 if(ping2 < _minPing)
                 {
-                    Led::getInstance().setSonar4(1);
+                    //Led::getInstance().setSonar4(1);
+                    cout << "sonar 4:" << ping2 /58 << endl;
                 }
             }
         }
@@ -232,10 +244,10 @@ int Car::moveCar(CarDirection direction, int pulse)
         switcher = !switcher;
         leftPulse = _leftEncoder.getCounter();
         rightPulse = _rightEncoder.getCounter();
-        cout << leftPulse << " vs " << rightPulse << endl;
-        int leftSpeed = _speed;
-        leftSpeed += (rightPulse - leftPulse);
-        _leftMotor.run(md, leftSpeed);
+        //cout << leftPulse << " vs " << rightPulse << endl;
+        //int leftSpeed = _speed;
+        //leftSpeed += (rightPulse - leftPulse);
+        //_leftMotor.run(md, leftSpeed);
         if(slowPulse > 20 && leftPulse > slowPulse)
         {
             if(!isSlow)
@@ -249,6 +261,7 @@ int Car::moveCar(CarDirection direction, int pulse)
     }
     _leftMotor.stop(false);
     _rightMotor.stop(false);
+    //cout << "return 1" << endl;
     return 1;
 }
 
@@ -257,8 +270,16 @@ int Car::moveForward(int distance)
     int result = 0;
     if(distance > 0)
     {
-        int pulse = round((double)distance / 22) * 40;
+        int pulse = round((double)distance / 22 * 40);
+        _leftEncoder.start();
+        _rightEncoder.start();
         result = moveCar(CarDirection::FORWARD, pulse);
+        _leftEncoder.stop();
+        _rightEncoder.stop();
+    }
+    if (result < 0)
+    {
+        Led::getInstance().buzz();
     }
     return result;
 }
@@ -268,8 +289,16 @@ int Car::moveBackward(int distance)
     int result = 0;
     if(distance > 0)
     {
-        int pulse = round((double)distance / 22) * 40;
+        int pulse = round((double)distance / 22 * 40);
+        _leftEncoder.start();
+        _rightEncoder.start();
         result = moveCar(CarDirection::BACKWARD, pulse);
+        _leftEncoder.stop();
+        _rightEncoder.stop();
+    }
+    if (result < 0)
+    {
+        Led::getInstance().buzz();
     }
     return result;
 }
@@ -332,22 +361,29 @@ void Car::turnRight(int degree)
 int Car::rotateLeft(int degree)
 {
     int result = 0;
-    int pulse = 28;
+    int pulse = 30;
+    _leftEncoder.start();
+        _rightEncoder.start();
     result = rotateCar(CarDirection::LEFT, pulse);
+    _leftEncoder.stop();
+        _rightEncoder.stop();
     return result;
 }
 
 int Car::rotateRight(int degree)
 {
     int result = 0;
-    int pulse = 28;
+    int pulse = 30;
+    _leftEncoder.start();
+        _rightEncoder.start();
     result = rotateCar(CarDirection::RIGHT, pulse);
+    _leftEncoder.stop();
+        _rightEncoder.stop();
     return result;
 }
 
 void Car::test()
 {
-
 }
 
 void Car::stop()
@@ -360,18 +396,36 @@ void Car::setSpeed(int level)
 {
     if(1 == level)
     {
-        _speed = 16;
-        _minPing = 15 * 58; // 10cm
+        if(SPEED_2 == _speed)
+        {
+            _speed = SPEED_1;
+            _minPing = 15 * 58; // 10cm
+        } else
+        if(SPEED_3 == _speed)
+        {
+            _speed = SPEED_2;
+            _minPing = 20 * 58;
+        }
+
     }
-    else if(2 == level || 0 == level)
+    else if(2 == level)
     {
-        _speed = 25;
-        _minPing = 25 * 58;
+        _speed = SPEED_2;
+        _minPing = 20 * 58;
     }
     else if(3 == level)
     {
-        _speed = 40;
-        _minPing = 35 * 58;
+        if(SPEED_1 == _speed)
+        {
+            _speed = SPEED_2;
+            _minPing = 20 * 58;
+        } else
+        if(SPEED_2 == _speed)
+        {
+            _speed = SPEED_3;
+            _minPing = 25 * 58;
+        }
+
     }
     //_speed+=15;
     _leftMotor.setPWMDutyCycle(_speed);

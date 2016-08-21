@@ -14,6 +14,15 @@
 using namespace std;
 
 void* driveCar(void* arg);
+void* showLed(void* arg)
+{
+    Led::getInstance().setReady(1);
+    Led::getInstance().setSonar1(1);
+    Led::getInstance().setSonar2(1);
+    Led::getInstance().setSonar3(1);
+    Led::getInstance().setSonar4(1);
+    Led::getInstance().start();
+}
 
 int main()
 {
@@ -22,11 +31,10 @@ int main()
         Serial serial("/dev/ttyAMA0", 9600);
         queue<Command> cmdQueue;
         pthread_t* t1 = NULL;
+        gpioStartThread(showLed,NULL);
         string message;
-        Led::getInstance().setReady(1);
-        Car::getInstance().test();
 
-        /*
+/*
         Sonar sonar1(TRIGGER1, ECHO1);
         Sonar sonar4(TRIGGER4, ECHO4);
         Sonar sonar3(TRIGGER3, ECHO3);
@@ -38,9 +46,10 @@ int main()
             int ping4 = sonar4.ping(); // delayed 50ms
             int ping3 = sonar3.ping(); // delayed 50ms
             //cout << ping1/58 << " vs " << ping4/58 << endl;
-            cout << ping2/58 << " vs " << ping3/58 << endl;
+
+            cout << ping1/58 << " - " << ping2/58 <<" - " << ping3/58 <<" - " << ping4/58 << endl;
         }
-        */
+*/
         while(true)
         {
             while(serial.dataAvailable() > 0)
@@ -124,11 +133,6 @@ void* driveCar(void* arg)
         //[id,action,distance,speed]
         if(!cmdQueue.empty())
         {
-            Led::getInstance().setSonar1(0);
-            Led::getInstance().setSonar2(0);
-            Led::getInstance().setSonar3(0);
-            Led::getInstance().setSonar4(0);
-
             Command cmd = cmdQueue.front();
 
             string action = cmd.getAction();
@@ -138,6 +142,7 @@ void* driveCar(void* arg)
                 int speedLevel = cmd.getParam2();
                 car.setSpeed(speedLevel);
                 int distance = cmd.getParam1();
+                cout << "distance = action" << distance << endl;
                 if(distance > 0)
                 {
                     car.moveForward(distance);
@@ -152,10 +157,11 @@ void* driveCar(void* arg)
             }
             else if("back" == action)
             {
-                cout << "back = action" << endl;
+
                 int speedLevel = cmd.getParam2();
                 car.setSpeed(speedLevel);
                 int distance = cmd.getParam1();
+                cout << "back = action" << distance << endl;
                 if(distance > 0)
                 {
                     car.moveBackward(distance);
@@ -171,6 +177,7 @@ void* driveCar(void* arg)
             else if("left" == action)
             {
                 int distance = cmd.getParam1();
+                cout << "left = action" << distance << endl;
                 car.rotateLeft(90);
                 if(distance > 0)
                 {
@@ -183,6 +190,7 @@ void* driveCar(void* arg)
             else if("right" == action)
             {
                 int distance = cmd.getParam1();
+                cout << "right = action" << distance << endl;
                 car.rotateRight(90);
                 if(distance > 0)
                 {

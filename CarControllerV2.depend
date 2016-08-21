@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1471594060 source:/home/pi/Desktop/CarControllerV2/main.cpp
+1471814778 source:/home/pi/Desktop/CarControllerV2/main.cpp
 	<iostream>
 	<sstream>
 	<queue>
@@ -16,10 +16,11 @@
 1471000848 /home/pi/Desktop/CarControllerV2/include/command.h
 	<string>
 
-1471500437 source:/home/pi/Desktop/CarControllerV2/src/encoder.cpp
+1471804797 source:/home/pi/Desktop/CarControllerV2/src/encoder.cpp
 	"encoder.h"
+	"led.h"
 
-1468968489 /home/pi/Desktop/CarControllerV2/include/encoder.h
+1471804509 /home/pi/Desktop/CarControllerV2/include/encoder.h
 	<pigpio.h>
 
 1471019555 /home/pi/Desktop/CarControllerV2/include/serial.h
@@ -36,13 +37,14 @@
 	"serial.h"
 	<pigpio.h>
 
-1471335108 source:/home/pi/Desktop/CarControllerV2/src/motor.cpp
+1471803952 source:/home/pi/Desktop/CarControllerV2/src/motor.cpp
 	"motor.h"
+	"led.h"
 
-1471334832 /home/pi/Desktop/CarControllerV2/include/motor.h
+1471804275 /home/pi/Desktop/CarControllerV2/include/motor.h
 	<pigpio.h>
 
-1471419212 /home/pi/Desktop/CarControllerV2/include/car.h
+1471663301 /home/pi/Desktop/CarControllerV2/include/car.h
 	"motor.h"
 	"encoder.h"
 	"sonar.h"
@@ -50,7 +52,7 @@
 
 1469089139 /home/pi/Desktop/CarControllerV2/include/mapping.h
 
-1471588950 source:/home/pi/Desktop/CarControllerV2/src/car.cpp
+1471814778 source:/home/pi/Desktop/CarControllerV2/src/car.cpp
 	"car.h"
 	"hmc5883l.h"
 	"constants.h"
@@ -60,7 +62,8 @@
 	<cmath>
 	"led.h"
 
-1471502880 /home/pi/Desktop/CarControllerV2/include/constants.h
+1471811358 /home/pi/Desktop/CarControllerV2/include/constants.h
+	<iostream>
 
 1470984077 source:/home/pi/Desktop/CarControllerV2/src/hmc5883l.cpp
 	"hmc5883l.h"
@@ -73,5 +76,7 @@
 
 1471509497 source:/home/pi/Desktop/CarControllerV2/src/led.cpp
 
-1471510651 /home/pi/Desktop/CarControllerV2/include/led.h
+1471815598 /home/pi/Desktop/CarControllerV2/include/led.h
+	"constants.h"
+	<unistd.h>
 
